@@ -1,6 +1,0 @@
-C:\Users\Honza\source\repos\HTTP-Parser\HTTP-Parser\bin\Debug\netstandard2.0\HTTP-Parser.deps.json
-C:\Users\Honza\source\repos\HTTP-Parser\HTTP-Parser\bin\Debug\netstandard2.0\HTTP-Parser.dll
-C:\Users\Honza\source\repos\HTTP-Parser\HTTP-Parser\obj\Debug\netstandard2.0\HTTP-Parser.csprojAssemblyReference.cache
-C:\Users\Honza\source\repos\HTTP-Parser\HTTP-Parser\obj\Debug\netstandard2.0\HTTP-Parser.csproj.CoreCompileInputs.cache
-C:\Users\Honza\source\repos\HTTP-Parser\HTTP-Parser\obj\Debug\netstandard2.0\HTTP-Parser.AssemblyInfoInputs.cache
-C:\Users\Honza\source\repos\HTTP-Parser\HTTP-Parser\obj\Debug\netstandard2.0\HTTP-Parser.AssemblyInfo.cs
