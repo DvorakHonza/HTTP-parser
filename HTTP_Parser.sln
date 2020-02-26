@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTTP_Parser", "HTTP-Parser\HTTP_Parser.csproj", "{D69E344E-9A73-4772-94BD-24E2469D9BCE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserTests", "ParserTests\ParserTests.csproj", "{639D2498-3EFA-4041-AA23-C37515FAA78C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D69E344E-9A73-4772-94BD-24E2469D9BCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D69E344E-9A73-4772-94BD-24E2469D9BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D69E344E-9A73-4772-94BD-24E2469D9BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D69E344E-9A73-4772-94BD-24E2469D9BCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{639D2498-3EFA-4041-AA23-C37515FAA78C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{639D2498-3EFA-4041-AA23-C37515FAA78C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{639D2498-3EFA-4041-AA23-C37515FAA78C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{639D2498-3EFA-4041-AA23-C37515FAA78C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0D85E957-FF99-4239-BB8D-006FB269493D}
+	EndGlobalSection
+EndGlobal

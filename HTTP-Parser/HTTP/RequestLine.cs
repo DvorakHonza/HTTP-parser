@@ -8,14 +8,16 @@ namespace HTTP_Parser.HTTP
     {
         public string Method { get; }
         public string RequestTarget { get; }
-        public float Version { get; }
+        public double Version { get; }
 
-        public RequestLine( string Method, string RequestTarget, float Version)
+        public RequestLine( string Method, string RequestTarget, double Version)
         {
             this.Method = Method;
             this.RequestTarget = RequestTarget;
             this.Version = Version;
 
         }
+
+        public override string ToString() => $"{Method} {RequestTarget} HTTP/{Version}";
     }
 }

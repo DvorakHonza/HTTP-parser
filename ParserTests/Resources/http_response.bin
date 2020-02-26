@@ -1,0 +1,13 @@
+HTTP/1.1 301 Moved Permanently
+Date: Mon, 24 Feb 2020 09:41:02 GMT
+Server: Apache
+Content-Location: index.php.cz
+Vary: negotiate,accept-language
+TCN: choice
+Location: https://www.fit.vut.cz/
+Keep-Alive: timeout=60, max=100
+Connection: Keep-Alive
+Transfer-Encoding: chunked
+Content-Type: text/html; charset=iso-8859-2
+Content-Language: cs
+
