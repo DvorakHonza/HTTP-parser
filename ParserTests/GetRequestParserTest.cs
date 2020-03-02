@@ -16,7 +16,7 @@ namespace ParserTests
         }
 
         [Fact]
-        public void RequestLineBasolutePathNonEmptyTest()
+        public void RequestLineAbsolutePathNonEmptyTest()
         {
             string method = "GET /where?q=now HTTP/1.1\r\n";
             var res = HttpParser.Parse(method);
@@ -25,12 +25,27 @@ namespace ParserTests
         }
 
         [Fact]
-        public void RequestLineBasolutePathEmptyTest()
+        public void RequestLineAbsolutePathEmptyTest()
         {
             string method = "GET / HTTP/1.1\r\n";
             var res = HttpParser.Parse(method);
             output.WriteLine(res.Value.ToString());
             Assert.True(res.Success);
+        }
+        [Fact]
+        public void StatusLineWithoutCrlfTest_DoesFail()
+        {
+            string statusLine = "HTTP/1.1 301 Moved Permanently";
+            var result = HttpParser.Parse(statusLine);
+            Assert.False(result.Success);
+        }
+
+        [Fact]
+        public void StatusLineWithCrlfTest_DoesNotFail()
+        {
+            string statusLine = "HTTP/1.1 301 Moved Permanently\r\n";
+            var result = HttpParser.Parse(statusLine);
+            Assert.True(result.Success);
         }
 
         /*

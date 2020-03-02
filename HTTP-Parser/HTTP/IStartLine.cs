@@ -6,5 +6,6 @@ namespace HTTP_Parser.HTTP
 {
     public interface IStartLine
     {
+        string ToString();
     }
 }
