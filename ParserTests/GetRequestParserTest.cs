@@ -16,41 +16,7 @@ namespace ParserTests
         }
 
         [Fact]
-        public void RequestLineAbsolutePathNonEmptyTest()
-        {
-            string method = "GET /where?q=now HTTP/1.1\r\n";
-            var res = HttpParser.Parse(method);
-            output.WriteLine(res.Value.ToString());
-            Assert.True(res.Success);
-        }
-
-        [Fact]
-        public void RequestLineAbsolutePathEmptyTest()
-        {
-            string method = "GET / HTTP/1.1\r\n";
-            var res = HttpParser.Parse(method);
-            output.WriteLine(res.Value.ToString());
-            Assert.True(res.Success);
-        }
-        [Fact]
-        public void StatusLineWithoutCrlfTest_DoesFail()
-        {
-            string statusLine = "HTTP/1.1 301 Moved Permanently";
-            var result = HttpParser.Parse(statusLine);
-            Assert.False(result.Success);
-        }
-
-        [Fact]
-        public void StatusLineWithCrlfTest_DoesNotFail()
-        {
-            string statusLine = "HTTP/1.1 301 Moved Permanently\r\n";
-            var result = HttpParser.Parse(statusLine);
-            Assert.True(result.Success);
-        }
-
-        /*
-        [Fact]
-        public void Test1()
+        public void HttpRequest_Test()
         {
             string myString;
             using (FileStream fs = new FileStream("Resources/http_request.bin", FileMode.Open))
@@ -62,7 +28,28 @@ namespace ParserTests
 
             byte[] rebin = Convert.FromBase64String(myString);
             string converted = Encoding.UTF8.GetString(rebin, 0, rebin.Length);
-            output.WriteLine(converted);
-        }*/
+            var res = HttpParser.Parse(converted);
+            Assert.True(res.Success);
+            output.WriteLine(res.Value.ToString());
+        }
+
+        [Fact]
+        public void HttpResponse_Test()
+        {
+            string myString;
+            using (FileStream fs = new FileStream("Resources/http_response.bin", FileMode.Open))
+            using (BinaryReader br = new BinaryReader(fs))
+            {
+                byte[] bin = br.ReadBytes(Convert.ToInt32(fs.Length));
+                myString = Convert.ToBase64String(bin);
+            }
+
+            byte[] rebin = Convert.FromBase64String(myString);
+            string converted = Encoding.UTF8.GetString(rebin, 0, rebin.Length);
+            var res = HttpParser.Parse(converted);
+            Assert.True(res.Success);
+            output.WriteLine(res.Value.ToString());
+        }
+
     }
 }
