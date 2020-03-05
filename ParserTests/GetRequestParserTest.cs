@@ -52,5 +52,23 @@ namespace ParserTests
             output.WriteLine(res.Value.ToString());
         }
 
+        [Fact]
+        public void HttpResponseWithJpegTest_DoesNotFail()
+        {
+            string myString;
+            using (FileStream fs = new FileStream("Resources/http_response_with_jpeg.bin", FileMode.Open))
+            using (BinaryReader br = new BinaryReader(fs))
+            {
+                byte[] bin = br.ReadBytes(Convert.ToInt32(fs.Length));
+                myString = Convert.ToBase64String(bin);
+            }
+
+            byte[] rebin = Convert.FromBase64String(myString);
+            string converted = Encoding.UTF8.GetString(rebin, 0, rebin.Length);
+            var res = HttpParser.Parse(converted);
+            Assert.True(res.Success);
+            output.WriteLine(res.Value.ToString());
+        }
+
     }
 }

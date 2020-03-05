@@ -20,6 +20,5 @@ namespace HTTP_Parser.HTTP
         }
 
         public override string ToString() => $"{Method} {RequestTarget} HTTP/{Version}";
-
     }
 }

@@ -217,15 +217,17 @@ namespace HTTP_Parser
         private static readonly Parser<char, ImmutableDictionary<string, string>> HeaderFields =
             HeaderFieldParser.Many().Select(kvps => kvps.ToImmutableDictionary());
 
-        
         private static readonly Parser<char, HttpHeader> HttpHeaderParser =
             from startLine in StartLineParser
             from headerFields in HeaderFields
-            from crlf in CRLF
             select new HttpHeader(startLine, headerFields);
 
+        private static readonly Parser<char, HttpMessage> HttpMessageParser =
+            from header in HttpHeaderParser.Before(CRLF)
+            from body in Any.Select(res => (byte)res).Repeat(header.GetMessageBodyLength()).Select(res => res.ToArray()).Optional()
+            select body.HasValue ? new HttpMessage(header, body.Value) : new HttpMessage(header);
 
-        public static Result<char, HttpHeader> Parse(string input) => HttpHeaderParser.Parse(input);
+        public static Result<char, HttpMessage> Parse(string input) => HttpMessageParser.Parse(input);
 
         private static string IPv4ToHex(List<int> octets)
         {
