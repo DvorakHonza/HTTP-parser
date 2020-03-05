@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HTTP_Parser.HTTP
 {
-    public class StatusLine : IStartLine
+    public class StatusLine : StartLine
     {
         public double Version { get; }
         public int StatusCode { get; }

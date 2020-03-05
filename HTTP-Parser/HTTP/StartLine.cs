@@ -4,8 +4,8 @@ using System.Text;
 
 namespace HTTP_Parser.HTTP
 {
-    public interface IStartLine
+    public abstract class StartLine
     {
-        string ToString();
+        public abstract override string ToString();
     }
 }

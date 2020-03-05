@@ -31,6 +31,7 @@ namespace ParserTests
             var res = HttpParser.Parse(converted);
             Assert.True(res.Success);
             output.WriteLine(res.Value.ToString());
+            
         }
 
         [Fact]

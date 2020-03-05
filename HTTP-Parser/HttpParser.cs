@@ -7,6 +7,7 @@ using System.Linq;
 using System;
 using System.Text;
 using System.Collections.Immutable;
+using HTTP_Parser.HTTP.RequestTargets;
 
 namespace HTTP_Parser
 {
@@ -37,6 +38,7 @@ namespace HTTP_Parser
         private static readonly Parser<char, char> Underscore = Char('_');
         private static readonly Parser<char, char> Tilde = Char('~');
         private static readonly Parser<char, char> Colon = Char(':');
+        private static readonly Parser<char, char> ColonWhitespace = Colon.Between(SkipWhitespaces);
         private static readonly Parser<char, string> DoubleColon = String("::");
         private static readonly Parser<char, string> DoubleSlash = String("//");
         private static readonly Parser<char, char> LeftBracket = Char('[');
@@ -93,13 +95,13 @@ namespace HTTP_Parser
         private static readonly Parser<char, string> IpLiteral = IpVFuture.Or(IPv6Address).Between(LeftBracket, RightBracket).Labelled("IpLiteral");
         private static readonly Parser<char, string> Host = IpLiteral.Or(IPv4Address).Or(RegistredName).Labelled("Host");
 
-        private static readonly Parser<char, string> Authority =
+        private static readonly Parser<char, RequestTarget> Authority =
             from userInfo in UserInfo.Labelled("Authority UserInfo")
             from atSign in AtSign.Labelled("Authority at sign")
             from host in Host.Labelled("Authority host")
             from colon in Colon.Labelled("Authority Colon")
             from port in DecimalNum.Labelled("Authority port")
-            select userInfo + atSign.ToString() + host + colon + port.ToString();
+            select new AuthorityForm(userInfo + atSign.ToString() + host, port) as RequestTarget;
 
         private static readonly Parser<char, char> PChar =
             OneOf(new List<Parser<char, char>>() { Unreserved, PercentEncoding, UriSubDelims, Colon, AtSign }).Labelled("pchar");
@@ -126,24 +128,23 @@ namespace HTTP_Parser
         private static readonly Parser<char, string> Path = PathAbempty.Or(PathAbsolute).Or(PathRootless).Or(PathEmpty).Labelled("Path");
 
         private static readonly Parser<char, string> HierPart =
-            from doubleSlash in DoubleSlash.Labelled("HierPart DoubleSlash")
-            from authority in Authority.Labelled("HierPart Authority")
+            from authority in DoubleSlash.Then(Authority).Labelled("HierPart Authority")
             from path in Path.Labelled("HierPart Path")
-            select doubleSlash + authority + path;
+            select authority + path;
 
         private static readonly Parser<char, string> Fragment = NumberSign.Then(PChar.Or(Slash).Or(QuestionMark).ManyString()).Select(res => "#" + res).Labelled("Fragment");
 
         private static readonly Parser<char, double> Version = Http.Then(Slash).Then(Real).Labelled("Version");
         //TODO add obs-text
         private static readonly Parser<char, string> ReasonPhrase = LetterOrDigit.Or(Space).Or(HTab).ManyString().Labelled("ReasonPhrase");
-        private static readonly Parser<char, IStartLine> StatusLineParser =
+        private static readonly Parser<char, StartLine> StatusLineParser =
            from version in Version.Labelled("Status line version")
            from firstSpace in Space.Labelled("Status line first space")
            from statusCode in DecimalNum.Labelled("Status line code")
            from secondSpace in Space.Labelled("Status line second space")
            from reasonPhrase in ReasonPhrase.Labelled("Status line reason phrase")
            from crlf in CRLF.Labelled("Status line crlf")
-           select new StatusLine(version, statusCode, reasonPhrase) as IStartLine;
+           select new StatusLine(version, statusCode, reasonPhrase) as StartLine;
 
         private static readonly Parser<char, string> Method = Letter.AtLeastOnce().Select(res => ConvertIEnumerableToString(res)).Labelled("Method");
 
@@ -152,50 +153,54 @@ namespace HTTP_Parser
             from absolutePath in LetterOrDigit.ManyString().Labelled("AbsolutePath")
             select leadingSlash.ToString() + absolutePath;
 
-        //TODO add multiple queries chained with &
-        private static readonly Parser<char, string> Query =
-            from qMark in QuestionMark.Labelled("Query QuestionMark")
-            from name in LetterOrDigit.AtLeastOnce().Labelled("Query name")
-            from equalsSign in EqualsSign.Labelled("Query equals")
-            from value in LetterOrDigit.AtLeastOnce().Labelled("Query value")
-            select qMark.ToString() + ConvertIEnumerableToString(name) + equalsSign.ToString() + ConvertIEnumerableToString(value);
+        private static readonly Parser<char, KeyValuePair<string, string>> Query =
+            from name in LetterOrDigit.AtLeastOnce().Before(EqualsSign).Select(res => ConvertIEnumerableToString(res)).Labelled("Query name")
+            from value in LetterOrDigit.AtLeastOnce().Select(res => ConvertIEnumerableToString(res)).Labelled("Query value")
+            select new KeyValuePair<string, string>(name, value);
 
-        private static readonly Parser<char, string> OriginForm =
+        private static readonly Parser<char, ImmutableDictionary<string, string>> Queries = 
+            Query.Separated(Char('&')).Select(kvps => kvps.ToImmutableDictionary()).Labelled("Queries");
+
+        private static readonly Parser<char, RequestTarget> OriginForm =
             from absolutePath in AbsolutePath.Labelled("OriginForm absolute path")
-            from query in Query.Optional().Labelled("Optional query")
-            select query.HasValue ? absolutePath + query.Value : absolutePath;
+            from queries in Queries.Optional().Labelled("Optional query")
+            select queries.HasValue ? 
+                new OriginForm(absolutePath, queries.Value) as RequestTarget : 
+                new OriginForm(absolutePath) as RequestTarget; 
 
-        private static readonly Parser<char, string> AbsoluteURI =
+        private static readonly Parser<char, RequestTarget> AbsoluteFormParser =
            from scheme in Scheme.Before(Colon).Labelled("AbsoluteUri scheme")
            from hierPart in HierPart.Labelled("AbsoluteUri hierPart")
-           from query in Query.Optional().Labelled("AbsoluteUri query")
+           from queries in QuestionMark.Then(Queries).Optional().Labelled("AbsoluteUri query")
            from fragment in Fragment.Optional().Labelled("AbsoluteUri fragment")
-           select FormatAbsoluteUriOutput(scheme, hierPart, query, fragment);
+           select FormatAbsoluteUriOutput(scheme, hierPart, queries, fragment) as RequestTarget;
 
-        private static readonly Parser<char, string> AsteriskForm = Asterisk.Between(Space).Labelled("Asterisk form");
-        private static readonly Parser<char, string> RequestTarget = OriginForm.Or(AsteriskForm).Or(AbsoluteURI).Or(Authority).Labelled("Request target");
+        private static readonly Parser<char, RequestTarget> AsteriskFormParser = 
+            Asterisk.Between(Space).Select(res => new AsteriskForm() as RequestTarget).Labelled("Asterisk form");
+        private static readonly Parser<char, RequestTarget> RequestTargetParser = 
+            OriginForm.Or(AsteriskFormParser).Or(AbsoluteFormParser).Or(Authority).Labelled("Request target");
 
-        private static readonly Parser<char, IStartLine> RequestLineParser =
+        private static readonly Parser<char, StartLine> RequestLineParser =
             from method in Method.Labelled("RequestLine method")
-            from requestTarget in RequestTarget.Between(SkipWhitespaces).Labelled("RequestLine request target")
+            from requestTarget in RequestTargetParser.Between(SkipWhitespaces).Labelled("RequestLine request target")
             from version in Version.Labelled("RequestLine version")
             from crlf in CRLF.Labelled("RequestLine crlf")
-            select new RequestLine(method, requestTarget, version) as IStartLine;
+            select new RequestLine(method, requestTarget, version) as StartLine;
 
-        private static readonly Parser<char, IStartLine> StartLineParser = StatusLineParser.Or(RequestLineParser).Labelled("StartLine");
+        private static readonly Parser<char, StartLine> StartLineParser = StatusLineParser.Or(RequestLineParser).Labelled("StartLine");
 
         //Header fields
         private static readonly Parser<char, string> FieldName = TChar.AtLeastOnce().Select(res => ConvertIEnumerableToString(res)).Labelled("FieldName");
 
         //TODO add obs-text
-        private static readonly Parser<char, char> FieldVchar = AnyCharExcept(VCharComplement).Labelled("FieldVchar");
+        private static readonly Parser<char, char> FieldVChar = AnyCharExcept(VCharComplement).Labelled("FieldVChar");
         private static readonly Parser<char, string> FieldContentOptional =
             from space in Space.Or(HTab).Labelled("FieldContentOptional space")
             from trailingSpaces in Space.Or(HTab).ManyString().Labelled("FieldContentOptional trailingSpaces")
-            from vchar in FieldVchar.Labelled("FieldContentOptional vchar")
+            from vchar in FieldVChar.Labelled("FieldContentOptional VChar")
             select space + trailingSpaces + vchar;
         private static readonly Parser<char, string> FieldContent =
-            from begin in FieldVchar.Labelled("FieldContent begin")
+            from begin in FieldVChar.Labelled("FieldContent begin")
             from rest in FieldContentOptional.Optional().Labelled("FieldContent rest")
             select rest.HasValue ? begin + rest.Value : begin.ToString();
         private static readonly Parser<char, string> ObsFold =
@@ -205,21 +210,19 @@ namespace HTTP_Parser
             select crlf + space + trailingSpace;
         private static readonly Parser<char, string> FieldValue = FieldContent.ManyString();//.Or(ObsFold).ManyString();
         private static readonly Parser<char, string> WhitespacesExceptCrLf = Char('\x09').Or(Char('\x0b')).Or(Char('\x0c')).ManyString();
-        private static readonly Parser<char, HeaderField> SingleHeaderField =
-            from fieldName in FieldName.Before(Colon)
-            from leadingOws in SkipWhitespaces
-            from fieldValue in FieldValue
-            from trailingOws in WhitespacesExceptCrLf
-            from crlf in CRLF
-            select new HeaderField(fieldName, fieldValue);
-        private static readonly Parser<char, IEnumerable<HeaderField>> HeaderFields =
-            SingleHeaderField.Many();
 
+        private static readonly Parser<char, KeyValuePair<string, string>> HeaderFieldParser =
+            FieldName.Before(ColonWhitespace)
+            .Then(FieldValue, (key, value) => new KeyValuePair<string, string>(key, value)).Before(CRLF);
+        private static readonly Parser<char, ImmutableDictionary<string, string>> HeaderFields =
+            HeaderFieldParser.Many().Select(kvps => kvps.ToImmutableDictionary());
+
+        
         private static readonly Parser<char, HttpHeader> HttpHeaderParser =
             from startLine in StartLineParser
             from headerFields in HeaderFields
             from crlf in CRLF
-            select new HttpHeader(startLine, headerFields.ToImmutableArray());
+            select new HttpHeader(startLine, headerFields);
 
 
         public static Result<char, HttpHeader> Parse(string input) => HttpHeaderParser.Parse(input);
@@ -236,28 +239,27 @@ namespace HTTP_Parser
             return $"{octets[0]}.{octets[1]}.{octets[2]}.{octets[3]}";
         }
 
-        private static string FormatAbsoluteUriOutput(string scheme, string hierPart, Maybe<string> query, Maybe<string> fragment)
+        private static AbsoluteForm FormatAbsoluteUriOutput(string scheme, string hierPart, Maybe<ImmutableDictionary<string, string>> queries, Maybe<string> fragment)
         {
-            var baseUri = scheme + ":" + hierPart;
-            if (query.HasValue)
+            if (queries.HasValue)
             {
                 if (fragment.HasValue)
                 {
-                    return baseUri + query.Value + fragment.Value;
+                    return new AbsoluteForm(scheme, hierPart, queries.Value, fragment.Value);
                 } else
                 {
-                    return baseUri + query.Value;
+                    return new AbsoluteForm(scheme, hierPart, queries.Value);
                 }
             } else
             {
-                return baseUri;
+                return new AbsoluteForm(scheme, hierPart);
             }
         }
 
-        private static string ConvertIEnumerableToString(IEnumerable<char> chars)
+        private static string ConvertIEnumerableToString<T>(IEnumerable<T> items)
         {
             var stringBuilder = new StringBuilder();
-            foreach (var c in chars)
+            foreach (var c in items)
             {
                 stringBuilder.Append(c);
             }

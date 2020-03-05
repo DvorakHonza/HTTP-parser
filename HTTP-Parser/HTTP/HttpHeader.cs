@@ -8,11 +8,10 @@ namespace HTTP_Parser.HTTP
 {
     public class HttpHeader
     {
-        public IStartLine StartLine { get; }
-        public ImmutableArray<HeaderField> HeaderFields { get; }
-        public ImmutableDictionary<string, string> HeaderFields1 { get; }
+        public StartLine StartLine { get; }
+        public ImmutableDictionary<string, string> HeaderFields { get; }
 
-        public HttpHeader(IStartLine StartLine, ImmutableArray<HeaderField> HeaderFields)
+        public HttpHeader(StartLine StartLine, ImmutableDictionary<string, string> HeaderFields)
         {
             this.StartLine = StartLine;
             this.HeaderFields = HeaderFields;
@@ -20,7 +19,7 @@ namespace HTTP_Parser.HTTP
 
         public override string ToString()
         {
-            return $"{StartLine.ToString()}\r\n{string.Join("\r\n", HeaderFields.Select(item => $"{item.ToString()}"))}";
+            return $"{StartLine.ToString()}\r\n{string.Join("\r\n", HeaderFields.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}";
         }
     }
 }
