@@ -17,13 +17,31 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\http_request.bin">
+    <None Update="Resources\Requests\http_request_post.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\http_response.bin">
+    <None Update="Resources\Requests\http_request_to_IPv4_address.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\http_response_with_jpeg.bin">
+    <None Update="Resources\Requests\http_request_to_origin_server.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Requests\http_request_with_multiple_queries.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Responses\http_response_webPage.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Requests\http_get.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Responses\http_response_without_body.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Responses\http_response_with_jpeg.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Responses\http_response_with_text.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
