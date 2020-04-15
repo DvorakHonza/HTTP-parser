@@ -43,7 +43,7 @@ namespace ParserTests
             var res = HttpParser.Parse(input);
             Assert.True(res.Success);
             output.WriteLine(res.Value.ToString());
-            output.WriteLine(res.Value.MessageBody.Length.ToString());
+            //output.WriteLine(res.Value.MessageBody.Length.ToString());
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace ParserTests
             var res = HttpParser.Parse(input);
             Assert.True(res.Success);
             output.WriteLine(res.Value.ToString());
-            output.WriteLine(res.Value.MessageBody.Length.ToString());
+            //output.WriteLine(res.Value.MessageBody.Length.ToString());
         }
 
         [Fact]
@@ -76,7 +76,7 @@ namespace ParserTests
             var res = HttpParser.Parse(input);
             Assert.True(res.Success);
             output.WriteLine(res.Value.ToString());
-            output.WriteLine(res.Value.MessageBody.Length.ToString());
+            //output.WriteLine(res.Value.MessageBody.Length.ToString());
         }
     }
 }

@@ -138,20 +138,18 @@ namespace HTTP_Parser
         //TODO add obs-text
         private static readonly Parser<char, string> ReasonPhrase = LetterOrDigit.Or(Space).Or(HTab).ManyString().Labelled("ReasonPhrase");
         private static readonly Parser<char, StartLine> StatusLineParser =
-           from version in Version.Labelled("Status line version")
-           from firstSpace in Space.Labelled("Status line first space")
-           from statusCode in DecimalNum.Labelled("Status line code")
-           from secondSpace in Space.Labelled("Status line second space")
-           from reasonPhrase in ReasonPhrase.Labelled("Status line reason phrase")
-           from crlf in CRLF.Labelled("Status line crlf")
+           from version in Version.Before(Space).Labelled("Status line version")
+           from statusCode in DecimalNum.Before(Space).Labelled("Status line code")
+           from reasonPhrase in ReasonPhrase.Before(CRLF).Labelled("Status line reason phrase")
            select new StatusLine(version, statusCode, reasonPhrase) as StartLine;
 
         private static readonly Parser<char, string> Method = Letter.AtLeastOnce().Select(res => ConvertIEnumerableToString(res)).Labelled("Method");
 
+        private static readonly Parser<char, string> Segment = PChar.ManyString();
+
         private static readonly Parser<char, string> AbsolutePath =
-            from leadingSlash in Slash.Labelled("AbsolutePath slash")
-            from absolutePath in LetterOrDigit.ManyString().Labelled("AbsolutePath")
-            select leadingSlash.ToString() + absolutePath;
+            from absolutePath in (Slash.Then(Segment)).AtLeastOnce().Select(res => PrependChar(res, '/'))
+            select absolutePath;
 
         private static readonly Parser<char, KeyValuePair<string, string>> Query =
             from name in LetterOrDigit.AtLeastOnce().Before(EqualsSign).Select(res => ConvertIEnumerableToString(res)).Labelled("Query name")
@@ -164,6 +162,7 @@ namespace HTTP_Parser
         private static readonly Parser<char, RequestTarget> OriginForm =
             from absolutePath in AbsolutePath.Labelled("OriginForm absolute path")
             from queries in Queries.Optional().Labelled("Optional query")
+            from space in Space
             select queries.HasValue ? 
                 new OriginForm(absolutePath, queries.Value) as RequestTarget : 
                 new OriginForm(absolutePath) as RequestTarget; 
@@ -177,14 +176,14 @@ namespace HTTP_Parser
 
         private static readonly Parser<char, RequestTarget> AsteriskFormParser = 
             Asterisk.Between(Space).Select(res => new AsteriskForm() as RequestTarget).Labelled("Asterisk form");
-        private static readonly Parser<char, RequestTarget> RequestTargetParser = 
+
+        private static readonly Parser<char, RequestTarget> RequestTargetParser =
             OriginForm.Or(AsteriskFormParser).Or(AbsoluteFormParser).Or(Authority).Labelled("Request target");
 
         private static readonly Parser<char, StartLine> RequestLineParser =
-            from method in Method.Labelled("RequestLine method")
-            from requestTarget in RequestTargetParser.Between(SkipWhitespaces).Labelled("RequestLine request target")
-            from version in Version.Labelled("RequestLine version")
-            from crlf in CRLF.Labelled("RequestLine crlf")
+            from method in Method.Before(Space).Labelled("RequestLine method")
+            from requestTarget in RequestTargetParser//.Between(SkipWhitespaces).Labelled("RequestLine request target")
+            from version in Version.Before(CRLF).Labelled("RequestLine version")
             select new RequestLine(method, requestTarget, version) as StartLine;
 
         private static readonly Parser<char, StartLine> StartLineParser = StatusLineParser.Or(RequestLineParser).Labelled("StartLine");
@@ -194,15 +193,18 @@ namespace HTTP_Parser
 
         //TODO add obs-text
         private static readonly Parser<char, char> FieldVChar = AnyCharExcept(VCharComplement).Labelled("FieldVChar");
+
         private static readonly Parser<char, string> FieldContentOptional =
             from space in Space.Or(HTab).Labelled("FieldContentOptional space")
             from trailingSpaces in Space.Or(HTab).ManyString().Labelled("FieldContentOptional trailingSpaces")
             from vchar in FieldVChar.Labelled("FieldContentOptional VChar")
             select space + trailingSpaces + vchar;
+
         private static readonly Parser<char, string> FieldContent =
             from begin in FieldVChar.Labelled("FieldContent begin")
             from rest in FieldContentOptional.Optional().Labelled("FieldContent rest")
             select rest.HasValue ? begin + rest.Value : begin.ToString();
+
         private static readonly Parser<char, string> ObsFold =
             from crlf in CRLF.Labelled("ObsFold crlf")
             from space in Space.Or(HTab).Labelled("ObsFold space")
@@ -227,6 +229,11 @@ namespace HTTP_Parser
             from body in Any.Select(res => (byte)res).Repeat(header.GetMessageBodyLength()).Select(res => res.ToArray()).Optional()
             select body.HasValue ? new HttpMessage(header, body.Value) : new HttpMessage(header);
 
+        private static readonly Parser<char, double> test =
+            from t in Http.Then(Slash).Then(Real)
+            select t;
+
+        //public static Result<char, string> Parse(string input) => test.Parse(input);
         public static Result<char, HttpMessage> Parse(string input) => HttpMessageParser.Parse(input);
 
         private static string IPv4ToHex(List<int> octets)
@@ -264,6 +271,17 @@ namespace HTTP_Parser
             foreach (var c in items)
             {
                 stringBuilder.Append(c);
+            }
+            return stringBuilder.ToString();
+        }
+
+        private static string PrependChar(IEnumerable<string> segments, char delimiter)
+        {
+            var stringBuilder = new StringBuilder();
+            foreach (var segment in segments)
+            {
+                stringBuilder.Append(delimiter);
+                stringBuilder.Append(segment);
             }
             return stringBuilder.ToString();
         }
