@@ -1,13 +1,10 @@
 ﻿using HTTP_Parser.HTTP;
 using Pidgin;
-using System.Collections.Generic;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
 using System.Linq;
-using System.Collections.Immutable;
-using HTTP_Parser.Parsers;
 
-namespace HTTP_Parser
+namespace HTTP_Parser.Parsers
 {
     public static class HttpParser
     {

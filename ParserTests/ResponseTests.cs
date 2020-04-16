@@ -1,4 +1,4 @@
-﻿using HTTP_Parser;
+﻿using HTTP_Parser.Parsers;
 using System;
 using System.IO;
 using System.Text;
