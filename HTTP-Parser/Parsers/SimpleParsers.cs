@@ -43,18 +43,8 @@ namespace HTTP_Parser.Parsers
         public static readonly Parser<char, char> HexDigit = OneOf(HexDigits);
         public static readonly Parser<char, char> PercentEncoding =
             from percent in Percent
-            from number in HexDigit.Repeat(2).Select(res => ConvertIEnumerableToString(res))
+            from number in HexDigit.Repeat(2).Select(res => string.Concat(res))
             select Convert.ToChar(Convert.ToUInt32(number, 16));
-
-        public static string ConvertIEnumerableToString<T>(IEnumerable<T> items)
-        {
-            var stringBuilder = new StringBuilder();
-            foreach (var c in items)
-            {
-                stringBuilder.Append(c);
-            }
-            return stringBuilder.ToString();
-        }
-
+        
     }
 }

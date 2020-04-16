@@ -21,7 +21,8 @@ namespace HTTP_Parser.Parsers
                 SimpleParsers.Unreserved,
                 SimpleParsers.PercentEncoding,
                 SimpleParsers.UriSubDelims,
-                SimpleParsers.Colon }).ManyString().Labelled("User info");
+                SimpleParsers.Colon })
+            .ManyString().Labelled("User info");
 
         private static readonly Parser<char, string> RegistredName =
             SimpleParsers.Unreserved
@@ -60,7 +61,7 @@ namespace HTTP_Parser.Parsers
             SimpleParsers.Slash.Then(PChar.ManyString()).ManyString().Select(res => "/" + res.ToString()).Labelled("Path AbEmpty");
 
         private static readonly Parser<char, string> SegmentNz =
-            PChar.AtLeastOnce().Select(res => SimpleParsers.ConvertIEnumerableToString(res)).Labelled("SegmentNz");
+            PChar.AtLeastOnce().Select(res => string.Concat(res)).Labelled("SegmentNz");
 
         private static readonly Parser<char, string> PathAbsoluteOptional =
             Map((segment, pathAbempty) => segment + pathAbempty, SegmentNz, PathAbempty);
@@ -89,7 +90,7 @@ namespace HTTP_Parser.Parsers
             .Select(res => "#" + res).Labelled("Fragment");
 
         private static readonly Parser<char, string> Method = 
-            Letter.AtLeastOnce().Select(res => SimpleParsers.ConvertIEnumerableToString(res)).Labelled("Method");
+            Letter.AtLeastOnce().Select(res => string.Concat(res)).Labelled("Method");
 
         private static readonly Parser<char, string> Segment = PChar.ManyString();
 

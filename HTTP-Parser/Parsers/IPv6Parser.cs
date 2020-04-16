@@ -23,11 +23,18 @@ namespace HTTP_Parser.Parsers
         private static readonly Parser<char, string> IPv6First16BitsShortened =
             Map((begin, rest) => "::" + begin + rest, SimpleParsers.DoubleColon.Then(h16.Select(res => res.ToString("X") + ":").Repeat(5)), ls32);
 
-        public static readonly Parser<char, string> Address =
+        public static readonly Parser<char, string> IP =
             OneOf(new List<Parser<char, string>>() {
                 IPv6WithoutShortening,
                 IPv6First16BitsShortened
             }).Labelled("IPv6Address"); //TODO IPv6 address parsing
 
+        public static readonly Parser<char, string> Address =
+            SimpleParsers.HexDigit
+            .Or(Char(':'))
+            .ManyString()
+            .Where(res => System.Net.IPAddress.TryParse(res, out System.Net.IPAddress ip));
+
+        
     }
 }

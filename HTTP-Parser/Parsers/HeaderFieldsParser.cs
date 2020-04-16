@@ -12,7 +12,7 @@ namespace HTTP_Parser.Parsers
         private static readonly Parser<char, string> FieldName =
            SimpleParsers.TChar
            .AtLeastOnce()
-           .Select(res => SimpleParsers.ConvertIEnumerableToString(res))
+           .Select(res => string.Concat(res))
            .Labelled("FieldName");
 
         //TODO add obs-text
@@ -25,7 +25,7 @@ namespace HTTP_Parser.Parsers
                 SimpleParsers.Space
                 .Or(SimpleParsers.HTab)
                 .AtLeastOnce()
-                .Select(res => SimpleParsers.ConvertIEnumerableToString(res)),
+                .Select(res => string.Concat(res)),
                 FieldVChar
                 );
 

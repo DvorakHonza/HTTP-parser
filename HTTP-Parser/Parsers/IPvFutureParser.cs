@@ -9,7 +9,7 @@ namespace HTTP_Parser.Parsers
     public static class IPvFutureParser
     {
         public static readonly Parser<char, string> IpVFuture =
-            Map((version, end) => "v" + version.ToString() + "." + SimpleParsers.ConvertIEnumerableToString(end),
+            Map((version, end) => "v" + version.ToString() + "." + string.Concat(end),
                 Char('v').Then(HexNum),
                 SimpleParsers.Dot.Then(OneOf(new List<Parser<char, char>>() {
                     SimpleParsers.Unreserved,
