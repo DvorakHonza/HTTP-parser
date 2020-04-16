@@ -3,6 +3,7 @@ using Pidgin;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace HTTP_Parser.Parsers
 {
@@ -25,7 +26,7 @@ namespace HTTP_Parser.Parsers
         private static readonly Parser<char, char> test = SimpleParsers.PercentEncoding;
 
         //public static Result<char, char> Parse(string input) => test.Parse(input);
-        public static Result<char, HttpMessage> Parse(string input) => HttpMessageParser.Parse(input);
+        public static Result<char, IEnumerable<HttpMessage>> Parse(string input) => HttpMessageParser.Many().Parse(input);
 
     }
 }
