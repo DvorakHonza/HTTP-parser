@@ -34,6 +34,14 @@ namespace HTTP_Parser.HTTP.RequestTargets
 
         public override string ToString()
         {
+            if (Fragment == "")
+            {
+                if (Queries.IsEmpty)
+                {
+                    return $"{Scheme}://{HierarchyPart}";
+                }
+                return $"{Scheme}://{HierarchyPart}?{string.Join("&", Queries.Select(kvp => $"{kvp.Key}={kvp.Value}"))}";
+            }
             return $"{Scheme}://{HierarchyPart}?{string.Join("&", Queries.Select(kvp => $"{kvp.Key}={kvp.Value}"))}#{Fragment}";
         }
 

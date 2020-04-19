@@ -28,7 +28,7 @@ namespace ParserTests
             }
             var res = HttpParser.Parse(input);
             Assert.True(res.Success);
-            output.WriteLine(JsonSerializer.Serialize(res.Value));
+            output.WriteLine(string.Concat(res.Value));
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace ParserTests
             }
             var res = HttpParser.Parse(input);
             Assert.True(res.Success);
-            output.WriteLine(res.Value.ToString());
+            output.WriteLine(string.Concat(res.Value));
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace ParserTests
             }
             var res = HttpParser.Parse(input);
             Assert.True(res.Success);
-            output.WriteLine(res.Value.ToString());
+            output.WriteLine(string.Concat(res.Value));
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace ParserTests
             }
             var res = HttpParser.Parse(input);
             Assert.True(res.Success);
-            output.WriteLine(res.Value.ToString());
+            output.WriteLine(string.Concat(res.Value));
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace ParserTests
             }
             var res = HttpParser.Parse(input);
             Assert.True(res.Success);
-            output.WriteLine(res.Value.ToString());
+            output.WriteLine(string.Concat(res.Value));
         }
 
         [Fact]
@@ -103,7 +103,7 @@ namespace ParserTests
             }
             var res = HttpParser.Parse(input);
             Assert.True(res.Success);
-            output.WriteLine(res.Value.ToString());
+            output.WriteLine(string.Concat(res.Value));
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace ParserTests
             }
             var res = HttpParser.Parse(input);
             Assert.True(res.Success);
-            output.WriteLine(res.Value.ToString());
+            output.WriteLine(string.Concat(res.Value));
         }
     }
 }

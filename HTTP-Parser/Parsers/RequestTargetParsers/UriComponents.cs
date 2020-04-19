@@ -17,6 +17,8 @@ namespace HTTP_Parser.Parsers.RequestTargetParsers
                 SimpleParsers.Colon,
                 SimpleParsers.AtSign }).Labelled("pchar");
 
+        public static readonly Parser<char, string> Segment = PChar.ManyString();
+
         private static readonly Parser<char, KeyValuePair<string, string>> Query =
              PChar
             .Or(SimpleParsers.Slash)
