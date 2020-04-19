@@ -1,5 +1,4 @@
-﻿using System;
-using Pidgin;
+﻿using Pidgin;
 using static Pidgin.Parser;
 using System.Collections.Generic;
 using HTTP_Parser.HTTP.RequestTargets;
@@ -12,7 +11,7 @@ namespace HTTP_Parser.Parsers.RequestTargetParsers
             OneOf(new List<Parser<char, char>> {
                 SimpleParsers.Unreserved,
                 SimpleParsers.PercentEncoding,
-                SimpleParsers.UriSubDelims,
+                SimpleParsers.UriSubDelimiters,
                 SimpleParsers.Colon })
             .ManyString()
             .Labelled("User info");
@@ -21,7 +20,7 @@ namespace HTTP_Parser.Parsers.RequestTargetParsers
             OneOf(new List<Parser<char, char>> {
                     SimpleParsers.Unreserved,
                     SimpleParsers.PercentEncoding,
-                    SimpleParsers.UriSubDelims })
+                    SimpleParsers.UriSubDelimiters })
             .ManyString()
             .Labelled("RegisteredName");
 

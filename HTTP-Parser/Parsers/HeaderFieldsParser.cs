@@ -2,7 +2,6 @@
 using System.Collections.Immutable;
 using Pidgin;
 using static Pidgin.Parser;
-using static Pidgin.Parser<char>;
 
 namespace HTTP_Parser.Parsers
 {
@@ -14,13 +13,8 @@ namespace HTTP_Parser.Parsers
            .Select(string.Concat)
            .Labelled("FieldName");
 
-
-        //TODO add obs-text
         private static readonly Parser<char, char> FieldVChar =
-            Token(c => !char.IsControl(c));
-            //AnyCharExcept(SimpleParsers.VCharComplement)
-            //.Or(ObsText)
-            //.Labelled("FieldVChar");
+            SimpleParsers.VChar.Or(SimpleParsers.ObsText);
 
         private static readonly Parser<char, string> FieldContentOptional =
             Map((spaces, vchar) => spaces + vchar,
@@ -45,12 +39,10 @@ namespace HTTP_Parser.Parsers
             .ManyString();
 
         private static readonly Parser<char, string> FieldValue = FieldContent.Or(Try(ObsFold)).ManyString().Before(SimpleParsers.Crlf);
-        private static readonly Parser<char, string> WhitespacesExceptCrLf = Char('\x09').Or(Char('\x0b')).Or(Char('\x0c')).ManyString();
 
         private static readonly Parser<char, KeyValuePair<string, string>> HeaderFieldParser =
             FieldName.Before(SimpleParsers.ColonWhitespace)
                 .Then(FieldValue, (key, value) => new KeyValuePair<string, string>(key, value));
-            //.Before(SimpleParsers.Crlf);
 
         public static readonly Parser<char, ImmutableDictionary<string, string>> HeaderFields =
             HeaderFieldParser.Many().Select(kvps => kvps.ToImmutableDictionary());

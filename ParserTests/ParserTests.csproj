@@ -51,6 +51,9 @@
     <None Update="Resources\Responses\http_response_with_text.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Streams\gzipped_stream.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Streams\head_request_response.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

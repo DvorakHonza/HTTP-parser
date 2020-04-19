@@ -18,6 +18,6 @@ namespace HTTP_Parser.HTTP
             MessageBody = Array.Empty<byte>();
         }
 
-        public override string ToString() => $"{Header}";
+        public override string ToString() => $"{Header}\n";
     }
 }

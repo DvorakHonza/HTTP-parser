@@ -1,12 +1,9 @@
-﻿using System;
-using HTTP_Parser.HTTP;
+﻿using HTTP_Parser.HTTP;
 using Pidgin;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
 using System.Linq;
 using System.Collections.Generic;
-using HTTP_Parser.HTTP.RequestTargets;
-using HTTP_Parser.Parsers.RequestTargetParsers;
 
 namespace HTTP_Parser.Parsers
 {

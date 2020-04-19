@@ -23,7 +23,7 @@ namespace HTTP_Parser.Parsers.RequestTargetParsers
             OneOf(
                 SimpleParsers.Unreserved,
                 SimpleParsers.PercentEncoding,
-                SimpleParsers.UriSubDelims,
+                SimpleParsers.UriSubDelimiters,
                 SimpleParsers.AtSign
             ).AtLeastOnce()
             .Select(string.Concat);

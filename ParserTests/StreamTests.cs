@@ -59,5 +59,20 @@ namespace ParserTests
             Assert.True(res.Success);
             output.WriteLine(string.Concat(res.Value));
         }
+
+        [Fact]
+        public void GzippedStreamTest()
+        {
+            string input;
+            using (var fs = new FileStream("Resources/Streams/gzipped_stream.bin", FileMode.Open))
+            using (var br = new BinaryReader(fs))
+            {
+                var bin = br.ReadBytes(Convert.ToInt32(fs.Length));
+                input = Encoding.ASCII.GetString(bin, 0, bin.Length);
+            }
+            var res = HttpParser.Parse(input);
+            Assert.True(res.Success);
+            output.WriteLine(string.Concat(res.Value));
+        }
     }
 }

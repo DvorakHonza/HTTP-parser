@@ -13,7 +13,7 @@ namespace HTTP_Parser.Parsers.RequestTargetParsers
            OneOf(new List<Parser<char, char>>() {
                 SimpleParsers.Unreserved,
                 SimpleParsers.PercentEncoding,
-                SimpleParsers.UriSubDelims,
+                SimpleParsers.UriSubDelimiters,
                 SimpleParsers.Colon,
                 SimpleParsers.AtSign }).Labelled("pchar");
 
@@ -40,7 +40,6 @@ namespace HTTP_Parser.Parsers.RequestTargetParsers
             .Select(kvps => kvps.ToImmutableDictionary())
             .Labelled("Queries");
 
-
         private static KeyValuePair<string, string> HttpQueryToKvPair(string query)
         {
             var parts = query.Split(new[] { '=' }, 2);
@@ -49,7 +48,6 @@ namespace HTTP_Parser.Parsers.RequestTargetParsers
                 return new KeyValuePair<string, string>(parts[0], parts[1]);
             }
             return new KeyValuePair<string, string>(parts[0], "");
-
         }
     }
 }

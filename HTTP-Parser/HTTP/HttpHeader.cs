@@ -26,7 +26,6 @@ namespace HTTP_Parser.HTTP
             return $"{StartLine}\r\n{string.Join("\r\n", HeaderFields.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}";
         }
 
-        //TODO add full body check
         public bool HasBody()
         {
             switch (StartLine)

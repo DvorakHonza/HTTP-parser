@@ -9,9 +9,13 @@ namespace HTTP_Parser.Parsers
         private static readonly Parser<char, double> Version = 
             SimpleParsers.Http.Then(SimpleParsers.Slash).Then(Real);
 
-        //TODO add obs-text
-        private static readonly Parser<char, string> ReasonPhrase = 
-            LetterOrDigit.Or(SimpleParsers.Space).Or(SimpleParsers.HTab).ManyString();
+        private static readonly Parser<char, string> ReasonPhrase =
+            OneOf(
+                LetterOrDigit,
+                SimpleParsers.Space,
+                SimpleParsers.HTab,
+                SimpleParsers.ObsText
+                ).ManyString();
 
         public static readonly Parser<char, StartLine> StatusLine =
             Map((version, statusCode, reasonPhrase) => new StatusLine(version, statusCode, reasonPhrase) as StartLine,
