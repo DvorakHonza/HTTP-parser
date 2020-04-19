@@ -19,18 +19,30 @@ namespace ParserTests
         public void HttpStreamTest()
         {
             string input;
-            using (FileStream fs = new FileStream("Resources/Streams/http_stream.bin", FileMode.Open))
-            using (BinaryReader br = new BinaryReader(fs))
+            using (var fs = new FileStream("Resources/Streams/http_stream.bin", FileMode.Open))
+            using (var br = new BinaryReader(fs))
             {
-                byte[] bin = br.ReadBytes(Convert.ToInt32(fs.Length));
+                var bin = br.ReadBytes(Convert.ToInt32(fs.Length));
                 input = Encoding.ASCII.GetString(bin, 0, bin.Length);
             }
             var res = HttpParser.Parse(input);
             Assert.True(res.Success);
-            foreach ( var mess in res.Value)
+            output.WriteLine(string.Concat(res.Value));
+        }
+
+        [Fact]
+        public void HeadRequestResponseTest()
+        {
+            string input;
+            using (var fs = new FileStream("Resources/Streams/head_request_response.bin", FileMode.Open))
+            using (var br = new BinaryReader(fs))
             {
-                output.WriteLine(mess.ToString());
+                var bin = br.ReadBytes(Convert.ToInt32(fs.Length));
+                input = Encoding.ASCII.GetString(bin, 0, bin.Length);
             }
+            var res = HttpParser.Parse(input);
+            Assert.True(res.Success);
+            output.WriteLine(string.Concat(res.Value));
         }
     }
 }

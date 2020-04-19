@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace HTTP_Parser.HTTP
+﻿namespace HTTP_Parser.HTTP
 {
     public class StatusLine : StartLine
     {
@@ -10,11 +6,12 @@ namespace HTTP_Parser.HTTP
         public int StatusCode { get; }
         public string ReasonPhrase { get; }
 
-        public StatusLine(double Version, int StatusCode, string ReasonPhrase)
+        public StatusLine(double version, int statusCode, string reasonPhrase)
         {
-            this.Version = Version;
-            this.StatusCode = StatusCode;
-            this.ReasonPhrase = ReasonPhrase;
+            Version = version;
+            StatusCode = statusCode;
+            ReasonPhrase = reasonPhrase;
+            Type = MessageType.Response;
         }
 
         public override string ToString()

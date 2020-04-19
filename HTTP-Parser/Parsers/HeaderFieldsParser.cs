@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Text;
 using Pidgin;
 using static Pidgin.Parser;
+using static Pidgin.Parser<char>;
 
 namespace HTTP_Parser.Parsers
 {
@@ -12,20 +11,23 @@ namespace HTTP_Parser.Parsers
         private static readonly Parser<char, string> FieldName =
            SimpleParsers.TChar
            .AtLeastOnce()
-           .Select(res => string.Concat(res))
+           .Select(string.Concat)
            .Labelled("FieldName");
+
 
         //TODO add obs-text
         private static readonly Parser<char, char> FieldVChar =
-            AnyCharExcept(SimpleParsers.VCharComplement)
-            .Labelled("FieldVChar");
+            Token(c => !char.IsControl(c));
+            //AnyCharExcept(SimpleParsers.VCharComplement)
+            //.Or(ObsText)
+            //.Labelled("FieldVChar");
 
         private static readonly Parser<char, string> FieldContentOptional =
             Map((spaces, vchar) => spaces + vchar,
                 SimpleParsers.Space
                 .Or(SimpleParsers.HTab)
                 .AtLeastOnce()
-                .Select(res => string.Concat(res)),
+                .Select(string.Concat),
                 FieldVChar
                 );
 
@@ -34,15 +36,21 @@ namespace HTTP_Parser.Parsers
             from rest in FieldContentOptional.Optional().Labelled("FieldContent rest")
             select rest.HasValue ? begin + rest.Value : begin.ToString();
 
-        private static readonly Parser<char, Unit> ObsFold =
-            SimpleParsers.CRLF.Then(SimpleParsers.Space.Or(SimpleParsers.HTab).AtLeastOnce()).SkipMany();
+        private static readonly Parser<char, string> ObsFold =
+            SimpleParsers.Crlf
+            .Then(SimpleParsers.Space
+                .Or(SimpleParsers.HTab)
+                .AtLeastOnce()
+                .Select(string.Concat))
+            .ManyString();
 
-        private static readonly Parser<char, string> FieldValue = FieldContent.ManyString();//.Or(ObsFold).ManyString();
+        private static readonly Parser<char, string> FieldValue = FieldContent.Or(Try(ObsFold)).ManyString().Before(SimpleParsers.Crlf);
         private static readonly Parser<char, string> WhitespacesExceptCrLf = Char('\x09').Or(Char('\x0b')).Or(Char('\x0c')).ManyString();
 
         private static readonly Parser<char, KeyValuePair<string, string>> HeaderFieldParser =
             FieldName.Before(SimpleParsers.ColonWhitespace)
-            .Then(FieldValue, (key, value) => new KeyValuePair<string, string>(key, value)).Before(SimpleParsers.CRLF);
+                .Then(FieldValue, (key, value) => new KeyValuePair<string, string>(key, value));
+            //.Before(SimpleParsers.Crlf);
 
         public static readonly Parser<char, ImmutableDictionary<string, string>> HeaderFields =
             HeaderFieldParser.Many().Select(kvps => kvps.ToImmutableDictionary());

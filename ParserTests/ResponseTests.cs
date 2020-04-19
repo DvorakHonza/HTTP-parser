@@ -19,10 +19,10 @@ namespace ParserTests
         public void HttpResponseWithoutBody()
         {
             string input;
-            using (FileStream fs = new FileStream("Resources/Responses/http_response_without_body.bin", FileMode.Open))
-            using (BinaryReader br = new BinaryReader(fs))
+            using (var fs = new FileStream("Resources/Responses/http_response_without_body.bin", FileMode.Open))
+            using (var br = new BinaryReader(fs))
             {
-                byte[] bin = br.ReadBytes(Convert.ToInt32(fs.Length));
+                var bin = br.ReadBytes(Convert.ToInt32(fs.Length));
                 input = Encoding.ASCII.GetString(bin, 0, bin.Length);
             }
             var res = HttpParser.Parse(input);
@@ -34,10 +34,10 @@ namespace ParserTests
         public void HttpResponseWithTextTest()
         {
             string input;
-            using (FileStream fs = new FileStream("Resources/Responses/http_response_with_text.bin", FileMode.Open))
-            using (BinaryReader br = new BinaryReader(fs))
+            using (var fs = new FileStream("Resources/Responses/http_response_with_text.bin", FileMode.Open))
+            using (var br = new BinaryReader(fs))
             {
-                byte[] bin = br.ReadBytes(Convert.ToInt32(fs.Length));
+                var bin = br.ReadBytes(Convert.ToInt32(fs.Length));
                 input = Encoding.ASCII.GetString(bin, 0, bin.Length);
             }
             var res = HttpParser.Parse(input);
@@ -50,10 +50,10 @@ namespace ParserTests
         public void HttpResponseWithJpeg()
         {
             string input;
-            using (FileStream fs = new FileStream("Resources/Responses/http_response_with_jpeg.bin", FileMode.Open))
-            using (BinaryReader br = new BinaryReader(fs))
+            using (var fs = new FileStream("Resources/Responses/http_response_with_jpeg.bin", FileMode.Open))
+            using (var br = new BinaryReader(fs))
             {
-                byte[] bin = br.ReadBytes(Convert.ToInt32(fs.Length));
+                var bin = br.ReadBytes(Convert.ToInt32(fs.Length));
                 input = Encoding.ASCII.GetString(bin, 0, bin.Length);
             }
 
@@ -67,10 +67,10 @@ namespace ParserTests
         public void HttpResponseWithWebPage()
         {
             string input;
-            using (FileStream fs = new FileStream("Resources/Responses/http_response_webPage.bin", FileMode.Open))
-            using (BinaryReader br = new BinaryReader(fs))
+            using (var fs = new FileStream("Resources/Responses/http_response_webPage.bin", FileMode.Open))
+            using (var br = new BinaryReader(fs))
             {
-                byte[] bin = br.ReadBytes(Convert.ToInt32(fs.Length));
+                var bin = br.ReadBytes(Convert.ToInt32(fs.Length));
                 input = Encoding.ASCII.GetString(bin, 0, bin.Length);
             }
             var res = HttpParser.Parse(input);

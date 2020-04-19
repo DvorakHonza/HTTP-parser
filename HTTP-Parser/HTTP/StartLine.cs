@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace HTTP_Parser.HTTP
+﻿namespace HTTP_Parser.HTTP
 {
     public abstract class StartLine
     {
+        public MessageType Type { get; set; }
+
         public abstract override string ToString();
+
+
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using HTTP_Parser.HTTP.RequestTargets;
+﻿using HTTP_Parser.HTTP.RequestTargets;
 
 namespace HTTP_Parser.HTTP
 {
@@ -12,11 +8,12 @@ namespace HTTP_Parser.HTTP
         public RequestTarget RequestTarget { get; }
         public double Version { get; }
 
-        public RequestLine( string Method, RequestTarget RequestTarget, double Version)
+        public RequestLine( string method, RequestTarget requestTarget, double version)
         {
-            this.Method = Method;
-            this.RequestTarget = RequestTarget;
-            this.Version = Version;
+            Method = method;
+            RequestTarget = requestTarget;
+            Version = version;
+            Type = MessageType.Request;
         }
 
         public override string ToString() => $"{Method} {RequestTarget} HTTP/{Version}";

@@ -8,15 +8,22 @@ namespace HTTP_Parser.HTTP
         public StartLine StartLine { get; }
         public ImmutableDictionary<string, string> HeaderFields { get; }
 
-        public HttpHeader(StartLine StartLine, ImmutableDictionary<string, string> HeaderFields)
+        public HttpHeader(StartLine startLine, ImmutableDictionary<string, string> headerFields)
         {
-            this.StartLine = StartLine;
-            this.HeaderFields = HeaderFields;
+            HeaderFields = headerFields;
+            if (startLine.Type == MessageType.Request)
+            {
+                StartLine = startLine as RequestLine;
+            }
+            else
+            {
+                StartLine = startLine as StatusLine;
+            }
         }
 
         public override string ToString()
         {
-            return $"{StartLine.ToString()}\r\n{string.Join("\r\n", HeaderFields.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}";
+            return $"{StartLine}\r\n{string.Join("\r\n", HeaderFields.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}";
         }
 
         //TODO add full body check
@@ -25,13 +32,9 @@ namespace HTTP_Parser.HTTP
             switch (StartLine)
             {
                 case RequestLine _:
-                    if (HeaderFields.ContainsKey("Content-Length") || HeaderFields.ContainsKey("Transfer-Encoding"))
-                        return true;
-                    return false;
+                    return HeaderFields.ContainsKey("Content-Length") || HeaderFields.ContainsKey("Transfer-Encoding");
                 case StatusLine statusLine:
-                    if (statusLine.StatusCode < 199 || statusLine.StatusCode == 204 || statusLine.StatusCode == 304)
-                        return false;
-                    return true;
+                    return statusLine.StatusCode >= 199 && statusLine.StatusCode != 204 && statusLine.StatusCode != 304;
                 default:
                     return false;
             }

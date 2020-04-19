@@ -8,14 +8,14 @@ namespace HTTP_Parser.HTTP.RequestTargets
         public string AbsolutePath { get; }
         public ImmutableDictionary<string, string> Queries { get; }
 
-        public OriginForm(string AbsolutePath, ImmutableDictionary<string, string> Queries)
+        public OriginForm(string absolutePath, ImmutableDictionary<string, string> queries)
         {
-            this.AbsolutePath = AbsolutePath;
-            this.Queries = Queries;
+            AbsolutePath = absolutePath;
+            Queries = queries;
         }
-        public OriginForm(string AbsolutePath)
+        public OriginForm(string absolutePath)
         {
-            this.AbsolutePath = AbsolutePath;
+            AbsolutePath = absolutePath;
             Queries = ImmutableDictionary.Create<string, string>();
         }
         public override string ToString()

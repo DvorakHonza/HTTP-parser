@@ -1,17 +1,19 @@
-﻿using HTTP_Parser.HTTP;
+﻿using System;
+using HTTP_Parser.HTTP;
 using Pidgin;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
 using System.Linq;
 using System.Collections.Generic;
+using HTTP_Parser.HTTP.RequestTargets;
+using HTTP_Parser.Parsers.RequestTargetParsers;
 
 namespace HTTP_Parser.Parsers
 {
     public static class HttpParser
     {
-
-        private static readonly Parser<char, StartLine> StartLineParser = 
-            (StatusLineParser.StatusLine).Or(RequestLineParser.RequestLine).Labelled("StartLine");
+        private static readonly Parser<char, StartLine> StartLineParser =
+            Try(StatusLineParser.StatusLine).Or(RequestLineParser.RequestLine);
        
         private static readonly Parser<char, HttpHeader> HttpHeaderParser =
             Map((startLine, headerFields) => new HttpHeader(startLine, headerFields), 
@@ -19,14 +21,15 @@ namespace HTTP_Parser.Parsers
                 HeaderFieldsParser.HeaderFields);
 
         private static readonly Parser<char, HttpMessage> HttpMessageParser =
-            from header in HttpHeaderParser.Before(SimpleParsers.CRLF)
-            from body in Any.Select(res => (byte)res).Repeat(header.GetMessageBodyLength()).Select(res => res.ToArray()).Optional()
+            from header in HttpHeaderParser.Before(SimpleParsers.Crlf)
+            from body in Try(
+                Any
+                    .Select(res => (byte)res)
+                    .Repeat(header.GetMessageBodyLength())
+                    .Select(res => res.ToArray()))
+                .Optional()
             select body.HasValue ? new HttpMessage(header, body.Value) : new HttpMessage(header);
 
-        private static readonly Parser<char, char> test = SimpleParsers.PercentEncoding;
-
-        //public static Result<char, char> Parse(string input) => test.Parse(input);
         public static Result<char, IEnumerable<HttpMessage>> Parse(string input) => HttpMessageParser.Many().Parse(input);
-
     }
 }

@@ -1,23 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Pidgin;
 
 namespace HTTP_Parser.HTTP.RequestTargets
 {
     public class AuthorityForm : RequestTarget
     {
+        public string UserInfo { get; }
         public string Host { get; }
-        public int Port { get; }
+        public int? Port { get; }
 
-        public AuthorityForm(string Host, int Port)
+        public AuthorityForm(string userInfo, string host, int port)
         {
-            this.Host = Host;
-            this.Port = Port;
+            UserInfo = userInfo;
+            Host = host;
+            Port = port;
+        }
+
+        public AuthorityForm(string userInfo, string host)
+        {
+            UserInfo = userInfo;
+            Host = host;
+            Port = null;
         }
 
         public override string ToString()
         {
-            return $"{Host}:{Port}";
+            if (Port == null)
+            {
+                return $"{UserInfo}@{Host}";
+            }
+            return $"{UserInfo}@{Host}:{Port}";
         }
 
     }

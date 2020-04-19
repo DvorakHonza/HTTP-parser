@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
 
 namespace HTTP_Parser.HTTP.RequestTargets
 {
@@ -13,26 +10,26 @@ namespace HTTP_Parser.HTTP.RequestTargets
         public ImmutableDictionary<string, string> Queries { get; }
         public string Fragment { get; }
 
-        public AbsoluteForm(string Scheme, string HierarchyPart)
+        public AbsoluteForm(string scheme, string hierarchyPart)
         {
-            this.Scheme = Scheme;
-            this.HierarchyPart = HierarchyPart;
-            this.Queries = ImmutableDictionary.Create<string, string>();
-            this.Fragment = "";
+            Scheme = scheme;
+            HierarchyPart = hierarchyPart;
+            Queries = ImmutableDictionary.Create<string, string>();
+            Fragment = "";
         }
-        public AbsoluteForm(string Scheme, string HierarchyPart, ImmutableDictionary<string, string> Queries)
+        public AbsoluteForm(string scheme, string hierarchyPart, ImmutableDictionary<string, string> queries)
         {
-            this.Scheme = Scheme;
-            this.HierarchyPart = HierarchyPart;
-            this.Queries = Queries;
-            this.Fragment = "";
+            Scheme = scheme;
+            HierarchyPart = hierarchyPart;
+            Queries = queries;
+            Fragment = "";
         }
-        public AbsoluteForm(string Scheme, string HierarchyPart, ImmutableDictionary<string, string> Queries, string Fragment)
+        public AbsoluteForm(string scheme, string hierarchyPart, ImmutableDictionary<string, string> queries, string fragment)
         {
-            this.Scheme = Scheme;
-            this.HierarchyPart = HierarchyPart;
-            this.Queries = Queries;
-            this.Fragment = Fragment;
+            Scheme = scheme;
+            HierarchyPart = hierarchyPart;
+            Queries = queries;
+            Fragment = fragment;
         }
 
         public override string ToString()

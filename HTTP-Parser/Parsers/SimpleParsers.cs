@@ -23,12 +23,15 @@ namespace HTTP_Parser.Parsers
         public static readonly Parser<char, char> QuestionMark = Char('?');
         public static readonly Parser<char, string> Http = String("HTTP");
         public static readonly Parser<char, string> Asterisk = String("*");
-        public static readonly Parser<char, string> CRLF = String("\r\n");
+        public static readonly Parser<char, string> Crlf = String("\r\n");
         public static readonly Parser<char, char> AtSign = Char('@');
         public static readonly Parser<char, char> NumberSign = Char('#');
         public static readonly Parser<char, char> Delimiter = OneOf(Delimiters).Labelled("Delimiter");
-        public static readonly Parser<char, char> TChar = OneOf(new List<Parser<char, char>>() { OneOf(TCharSpecialSymbols), LetterOrDigit }).Labelled("tchar");
-        public static readonly Parser<char, char> UriSubDelims = OneOf(UriSubcomponentDelimiters).Labelled("UriSubDelims//");
+
+        public static readonly Parser<char, char> TChar =
+            OneOf(new List<Parser<char, char>>() {OneOf(TCharSpecialSymbols), LetterOrDigit});
+
+        public static readonly Parser<char, char> UriSubDelims = OneOf(UriSubcomponentDelimiters);
         public static readonly Parser<char, char> Dash = Char('-');
         public static readonly Parser<char, char> Underscore = Char('_');
         public static readonly Parser<char, char> Tilde = Char('~');
@@ -38,12 +41,14 @@ namespace HTTP_Parser.Parsers
         public static readonly Parser<char, string> DoubleSlash = String("//");
         public static readonly Parser<char, char> LeftBracket = Char('[');
         public static readonly Parser<char, char> RightBracket = Char(']');
-        public static readonly Parser<char, char> Unreserved = OneOf(new List<Parser<char, char>>() { LetterOrDigit, Dash, Dot, Underscore, Tilde }).Labelled("Unreserved");
+
+        public static readonly Parser<char, char> Unreserved =
+            OneOf(new List<Parser<char, char>>() {LetterOrDigit, Dash, Dot, Underscore, Tilde});
         public static readonly Parser<char, char> Percent = Char('%');
         public static readonly Parser<char, char> HexDigit = OneOf(HexDigits);
         public static readonly Parser<char, char> PercentEncoding =
             from percent in Percent
-            from number in HexDigit.Repeat(2).Select(res => string.Concat(res))
+            from number in HexDigit.Repeat(2).Select(string.Concat)
             select Convert.ToChar(Convert.ToUInt32(number, 16));
         
     }

@@ -1,0 +1,18 @@
+HEAD /v7/windowsupdate/redir/wuredir.cab?0807220556 HTTP/1.1
+Accept: */*
+User-Agent: Windows-Update-Agent
+Host: download.windowsupdate.com
+Connection: Keep-Alive
+
+HTTP/1.1 200 OK
+Content-Length: 10040
+Content-Type: application/octet-stream
+Accept-Ranges: bytes
+ETag: "df4cc878e71c71:803b"
+Server: Microsoft-IIS/6.0
+X-Powered-By: ASP.NET
+Age: 21
+Date: Tue, 22 Jul 2008 05:56:33 GMT
+Last-Modified: Wed, 28 Mar 2007 23:08:43 GMT
+Connection: keep-alive
+

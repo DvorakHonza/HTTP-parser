@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace HTTP_Parser.HTTP
 {
@@ -9,15 +7,15 @@ namespace HTTP_Parser.HTTP
         public HttpHeader Header { get; }
         public byte[] MessageBody { get; }
 
-        public HttpMessage(HttpHeader Header, byte[] MessageBody)
+        public HttpMessage(HttpHeader header, byte[] messageBody)
         {
-            this.Header = Header;
-            this.MessageBody = MessageBody;
+            Header = header;
+            MessageBody = messageBody;
         }
-        public HttpMessage(HttpHeader Header)
+        public HttpMessage(HttpHeader header)
         {
-            this.Header = Header;
-            Array.Clear(MessageBody, 0, 0);
+            Header = header;
+            MessageBody = Array.Empty<byte>();
         }
 
         public override string ToString() => $"{Header}";
