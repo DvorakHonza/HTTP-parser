@@ -49,3 +49,5 @@ Složky Requests a Responses obsahují samostatné zprávy, které sloužily k t
 ## Nedostatky implementace
 
 * Nelze určit, zda zpráva obsahuje tělo, pokud je tato informace závislá na typu požadavku.
+
+* Pokud je Transfer-Encoding nastaveno na chunked, tak tělo zpracuje pouze v znovu sestavené podobě
