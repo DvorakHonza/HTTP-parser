@@ -1,11 +1,12 @@
-﻿using HTTP_Parser.HTTP;
+﻿    using HTTP_Parser.HTTP;
 using Pidgin;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
 using System.Linq;
 using System.Collections.Generic;
+    using System.Collections.Immutable;
 
-namespace HTTP_Parser.Parsers
+    namespace HTTP_Parser.Parsers
 {
     public static class HttpParser
     {
@@ -19,13 +20,26 @@ namespace HTTP_Parser.Parsers
 
         private static readonly Parser<char, HttpMessage> HttpMessageParser =
             from header in HttpHeaderParser.Before(SimpleParsers.Crlf)
-            from body in Try(
-                Any
-                    .Select(res => (byte)res)
-                    .Repeat(header.GetMessageBodyLength())
-                    .Select(res => res.ToArray()))
-                .Optional()
+            from body in HttpGetBodyParser(header)
             select body.HasValue ? new HttpMessage(header, body.Value) : new HttpMessage(header);
+
+        private static Parser<char, Maybe<byte[]>> HttpGetBodyParser(HttpHeader header)
+        {
+            if (header.HeaderFields.GetValueOrDefault("Transfer-Encoding", "") == "chunked")
+            {
+                return Any
+                    .Select(res => (byte)res)
+                    .Many()
+                    .Select(res => res.ToArray())
+                    .Before(End)
+                    .Optional();
+            }
+            return Try(Any
+                        .Select(res => (byte) res)
+                        .Repeat(header.GetMessageBodyLength())
+                        .Select(res => res.ToArray()))
+                    .Optional();
+        }
 
         public static Result<char, IEnumerable<HttpMessage>> Parse(string input) => HttpMessageParser.Many().Parse(input);
     }

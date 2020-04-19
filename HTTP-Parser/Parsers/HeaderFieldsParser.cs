@@ -45,6 +45,25 @@ namespace HTTP_Parser.Parsers
                 .Then(FieldValue, (key, value) => new KeyValuePair<string, string>(key, value));
 
         public static readonly Parser<char, ImmutableDictionary<string, string>> HeaderFields =
-            HeaderFieldParser.Many().Select(kvps => kvps.ToImmutableDictionary());
+            HeaderFieldParser.Many().Select(ToDictionaryOfLists);
+
+        private static ImmutableDictionary<string, string> ToDictionaryOfLists(
+            IEnumerable<KeyValuePair<string, string>> kvps)
+        {
+            var dictionary = new Dictionary<string, string>();
+            foreach (var kvp in kvps)
+            {
+                if (dictionary.ContainsKey(kvp.Key))
+                {
+                    dictionary[kvp.Key] = dictionary[kvp.Key] + "\n" + kvp.Value;
+                }
+                else
+                {
+                    dictionary.Add(kvp.Key, kvp.Value);
+                }
+            }
+
+            return dictionary.ToImmutableDictionary();
+        }
     }
 }

@@ -49,8 +49,6 @@ namespace HTTP_Parser.Parsers
 
         public static readonly Parser<char, char> ColonWhitespace = Colon.Between(SkipWhitespaces);
 
-        public static readonly Parser<char, string> DoubleColon = String("::");
-
         public static readonly Parser<char, string> DoubleSlash = String("//");
 
         public static readonly Parser<char, char> LeftBracket = Char('[');

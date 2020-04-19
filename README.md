@@ -44,6 +44,8 @@ Složky Requests a Responses obsahují samostatné zprávy, které sloužily k t
 
 * http_proxy_connection.pcapng - obsahuje žádost s připojení k proxy pomocí metody CONNECT a odpověď (http_proxy_connection.bin)
 
+* http_jpeg.pcap - obsahuje žádost a odpověď s JPEG obrázkem
+
 ## Nedostatky implementace
 
 * Nelze určit, zda zpráva obsahuje tělo, pokud je tato informace závislá na typu požadavku.
