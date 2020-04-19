@@ -34,7 +34,7 @@ namespace ParserTests
         public void HeadRequestResponseTest()
         {
             string input;
-            using (var fs = new FileStream("Resources/Streams/head_request_response.bin", FileMode.Open))
+            using (var fs = new FileStream("Resources/Streams/http_head.bin", FileMode.Open))
             using (var br = new BinaryReader(fs))
             {
                 var bin = br.ReadBytes(Convert.ToInt32(fs.Length));
@@ -49,7 +49,7 @@ namespace ParserTests
         public void ProxyConnectionTest()
         {
             string input;
-            using (var fs = new FileStream("Resources/Streams/proxy_connection.bin", FileMode.Open))
+            using (var fs = new FileStream("Resources/Streams/http_proxy_connection.bin", FileMode.Open))
             using (var br = new BinaryReader(fs))
             {
                 var bin = br.ReadBytes(Convert.ToInt32(fs.Length));
@@ -64,7 +64,37 @@ namespace ParserTests
         public void GzippedStreamTest()
         {
             string input;
-            using (var fs = new FileStream("Resources/Streams/gzipped_stream.bin", FileMode.Open))
+            using (var fs = new FileStream("Resources/Streams/http_gzip.bin", FileMode.Open))
+            using (var br = new BinaryReader(fs))
+            {
+                var bin = br.ReadBytes(Convert.ToInt32(fs.Length));
+                input = Encoding.ASCII.GetString(bin, 0, bin.Length);
+            }
+            var res = HttpParser.Parse(input);
+            Assert.True(res.Success);
+            output.WriteLine(string.Concat(res.Value));
+        }
+
+        [Fact]
+        public void HttpTcpStream0Test()
+        {
+            string input;
+            using (var fs = new FileStream("Resources/Streams/http_tcp_stream_0.bin", FileMode.Open))
+            using (var br = new BinaryReader(fs))
+            {
+                var bin = br.ReadBytes(Convert.ToInt32(fs.Length));
+                input = Encoding.ASCII.GetString(bin, 0, bin.Length);
+            }
+            var res = HttpParser.Parse(input);
+            Assert.True(res.Success);
+            output.WriteLine(string.Concat(res.Value));
+        }
+
+        [Fact]
+        public void HttpTcpStream1Test()
+        {
+            string input;
+            using (var fs = new FileStream("Resources/Streams/http_tcp_stream_1.bin", FileMode.Open))
             using (var br = new BinaryReader(fs))
             {
                 var bin = br.ReadBytes(Convert.ToInt32(fs.Length));

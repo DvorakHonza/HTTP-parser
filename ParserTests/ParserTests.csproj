@@ -51,16 +51,22 @@
     <None Update="Resources\Responses\http_response_with_text.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Streams\gzipped_stream.bin">
+    <None Update="Resources\Streams\http_gzip.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Streams\head_request_response.bin">
+    <None Update="Resources\Streams\http_head.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Streams\http_stream.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Streams\proxy_connection.bin">
+    <None Update="Resources\Streams\http_tcp_stream_0.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Streams\http_tcp_stream_1.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Streams\http_proxy_connection.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
