@@ -1,6 +1,4 @@
-﻿using Pidgin;
-
-namespace HTTP_Parser.HTTP.RequestTargets
+﻿namespace HTTP_Parser.HTTP.RequestTargets
 {
     public class AuthorityForm : RequestTarget
     {
@@ -26,6 +24,10 @@ namespace HTTP_Parser.HTTP.RequestTargets
         {
             if (Port == null)
             {
+                if (UserInfo == "")
+                {
+                    return $"{Host}";
+                }
                 return $"{UserInfo}@{Host}";
             }
             return $"{UserInfo}@{Host}:{Port}";
