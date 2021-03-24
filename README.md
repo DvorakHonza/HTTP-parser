@@ -8,10 +8,10 @@ Zprává HTTP protokolu se skládá ze stavového řádku (Startline), hlaviček
 
 Výše zmíněná struktura je implementována pomocí tříd a závislostmi mezi nimi, jako je znázorněno v následujícím grafu.
 
-<div class=mermaid>
+```mermaid
   graph TD;
-    mess[HttpMessage]-->head[HttpHeader];
-    mess-->body[HttpBody];
+    msg[HttpMessage]-->head[HttpHeader];
+    msg-->body[HttpBody];
     head-->sLine[StartLine];
     head[HttpHeader]-->hFields[HeaderFields];
     sLine-->rLine[RequestLine];
@@ -26,8 +26,7 @@ Výše zmíněná struktura je implementována pomocí tříd a závislostmi mez
     rTarget-->AbsoluteForm;
     rTarget-->AsteriskForm;
     rTarget-->AuthorityForm;
-</div>
-
+```
 
 ## Testovací dataset
 
