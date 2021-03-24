@@ -10,22 +10,22 @@ Výše zmíněná struktura je implementována pomocí tříd a závislostmi mez
 
 ```mermaid
   graph TD;
-    HttpMessage-->HttpHeader;
-    HttpMessage-->HttpBody;
-    HttpHeader-->StartLine;
-    HttpHeader-->HeaderFields;
-    StartLine-->RequestLine;
-    StartLine-->StatusLine;
-    RequestLine-->Method;
-    RequestLine-->RequestTarget;
-    RequestLine-->Version;
-    StatusLine-->Version;
-    StatusLine-->StatusCode;
-    StatusLine-->ReasonPhrase;
-    RequestTarget-->OriginForm;
-    RequestTarget-->AbsoluteForm;
-    RequestTarget-->AsteriskForm;
-    RequestTarget-->AuthorityForm;
+    mess[HttpMessage]-->head[HttpHeader];
+    mess-->body[HttpBody];
+    head-->sLine[StartLine];
+    head[HttpHeader]-->hFields[HeaderFields];
+    sLine-->rLine[RequestLine];
+    sLine-->statL[StatusLine];
+    rLine-->Method;
+    rLine-->rTarget[RequestTarget];
+    rLine-->Version;
+    statL-->Version;
+    statL-->StatusCode;
+    statL-->ReasonPhrase;
+    rTarget-->OriginForm;
+    rTarget-->AbsoluteForm;
+    rTarget-->AsteriskForm;
+    rTarget-->AuthorityForm;
 ```
 
 ## Testovací dataset
